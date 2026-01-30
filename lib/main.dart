@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_application/utils/todoapp.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,8 +20,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isDone = false;
-  int tiles = 1;
+  List<Task> tasks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    tasks.add(Task(title: ''));
+  }
+
+  void _addNewTask() {
+    setState(() {
+      tasks.add(Task(title: ''));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,40 +48,40 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: tiles,
+              itemCount: tasks.length,
               itemBuilder: (context, index) => ListTile(
                 leading: Checkbox(
-                  value: isDone,
-                  onChanged: (newValue) {
+                  value: tasks[index].isDone,
+                  onChanged: (val) {
                     setState(() {
-                      isDone = !isDone;
+                      tasks[index].isDone = val ?? false;
                     });
                   },
                 ),
                 title: TextField(
+                  onChanged: (newText) {
+                    tasks[index].title = newText;
+                  },
                   style: TextStyle(
-                    decoration: isDone
+                    decoration: tasks[index].isDone
                         ? TextDecoration.lineThrough
                         : TextDecoration.none,
                     decorationThickness: 5.0,
                     color: Colors.white,
                   ),
-                  decoration: const InputDecoration(hintText: 'Enter text'),
+                  decoration: const InputDecoration(
+                    hintText: 'Enter text',
+                    border: InputBorder.none, // Делаем UI чище
+                  ),
                 ),
               ),
             ),
           ),
-          // Кнопка под списком
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  tiles++; // Например, добавляем новую плитку
-                });
-              },
-              child: 
-              Icon(Icons.add, )
+              onPressed: _addNewTask,
+              child: const Icon(Icons.add),
             ),
           ),
         ],
