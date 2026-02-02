@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Task> tasks = [];
+  List<int> tasksCount = [];
 
   @override
   void initState() {
@@ -31,6 +32,12 @@ class _HomePageState extends State<HomePage> {
   void _addNewTask() {
     setState(() {
       tasks.add(Task(title: ''));
+    });
+  }
+
+  void _deleteTask(int index) {
+    setState(() {
+      tasks.removeAt(index);
     });
   }
 
@@ -50,6 +57,7 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: tasks.length,
               itemBuilder: (context, index) => ListTile(
+                key: ValueKey(tasks[index]), 
                 leading: Checkbox(
                   value: tasks[index].isDone,
                   onChanged: (val) {
@@ -62,6 +70,7 @@ class _HomePageState extends State<HomePage> {
                   onChanged: (newText) {
                     tasks[index].title = newText;
                   },
+                  controller: TextEditingController(text: tasks[index].title),
                   style: TextStyle(
                     decoration: tasks[index].isDone
                         ? TextDecoration.lineThrough
@@ -71,8 +80,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   decoration: const InputDecoration(
                     hintText: 'Enter text',
-                    border: InputBorder.none, // Делаем UI чище
+                    border: InputBorder.none,
                   ),
+                ),
+                trailing: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _deleteTask(index);
+                    });
+                  },
+                  icon: Icon(Icons.delete, color: Colors.red),
                 ),
               ),
             ),
